@@ -1,7 +1,8 @@
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
@@ -55,9 +56,22 @@ class StudentsViewSet(ModelViewSet):
     serializer_class = StudentsSerializer
 
 
+class AllCoursesViewSet(ReadOnlyModelViewSet):
+    queryset = Course.objects.all()
+    serializer_class = CourseSerializer
+
+
 class CoursesViewSet(ModelViewSet):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def perform_create(self, serializer):
+        serializer.save(student=[])
+        teacher = Teacher.objects.get(user=self.request.user)
+        course = Course.objects.get(id=serializer.data['id'])
+        teacher.course.add(course.pk)
 
 
 class StudentSaveViewSet(ModelViewSet):

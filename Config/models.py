@@ -42,7 +42,7 @@ class Course(models.Model):
     desc = models.TextField()
     price = models.CharField(max_length=256)
     title = models.CharField(max_length=512)
-    student = models.ManyToManyField(to='Student', related_name='students')
+    student = models.ManyToManyField(to='Student', related_name='students', null=True, blank=True)
 
     def __str__(self):
         return f'{self.title}'

@@ -23,7 +23,7 @@ class SaveStudentSerializer(serializers.ModelSerializer):
 
 
 class CourseSerializer(serializers.ModelSerializer):
-    student = StudentsSerializer(many=True)
+    student = StudentsSerializer
 
     class Meta:
         model = Course
